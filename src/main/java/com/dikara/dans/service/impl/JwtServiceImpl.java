@@ -40,6 +40,7 @@ public class JwtServiceImpl implements JwtService {
         );
     }
 
+    @Override
     public Claims validate(String token) {
         return Jwts.parser()
                 .verifyWith(getSigningKey())
@@ -47,4 +48,6 @@ public class JwtServiceImpl implements JwtService {
                 .parseSignedClaims(token)
                 .getPayload();
     }
+
+
 }
