@@ -1,6 +1,7 @@
 package com.dikara.dans.service.impl;
 
 import com.dikara.dans.dto.request.EventRequest;
+import com.dikara.dans.dto.response.EvenStatsResponse;
 import com.dikara.dans.dto.response.EventRegistrationResponse;
 import com.dikara.dans.dto.response.EventResponse;
 import com.dikara.dans.entity.Event;
@@ -20,6 +21,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -102,5 +104,44 @@ public class EventServiceImpl implements EventService {
 
         eventRegistration = eventRegistrationRepository.save(eventRegistration);
         return eventRegistrationMapper.toResponse(eventRegistration);
+    }
+
+    @Transactional(readOnly = true)
+    @Override
+    public EvenStatsResponse getStatistics() {
+
+        List<Event> events =
+                eventRepository.findAll();
+
+        List<EventRegistration> registrations =
+                eventRegistrationRepository.findAll();
+
+        long totalEvents = events.size();
+        long totalRegistrations = registrations.size();
+
+        double averageParticipants =
+                registrations.stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        r -> r.getEvent().getId(),
+                                        Collectors.counting()
+                                )
+                        )
+                        .values()
+                        .stream()
+                        .mapToLong(Long::longValue)
+                        .average()
+                        .orElse(0);
+
+        System.out.println("rata rata peserta per event: "+totalRegistrations/totalEvents);
+
+
+
+        return EvenStatsResponse.builder()
+                .totalEvents(totalEvents)
+                .totalRegistrations(totalRegistrations)
+                .averageParticipants(averageParticipants)
+                //.topEvents(topEvents)
+                .build();
     }
 }

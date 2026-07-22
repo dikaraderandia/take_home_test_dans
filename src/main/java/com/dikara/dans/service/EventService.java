@@ -1,6 +1,7 @@
 package com.dikara.dans.service;
 
 import com.dikara.dans.dto.request.EventRequest;
+import com.dikara.dans.dto.response.EvenStatsResponse;
 import com.dikara.dans.dto.response.EventRegistrationResponse;
 import com.dikara.dans.dto.response.EventResponse;
 import org.springframework.transaction.annotation.Transactional;
@@ -19,4 +20,7 @@ public interface EventService {
     );
 
     EventRegistrationResponse registerEvent(Long eventId, String email);
+
+    @Transactional(readOnly = true)
+    EvenStatsResponse getStatistics();
 }

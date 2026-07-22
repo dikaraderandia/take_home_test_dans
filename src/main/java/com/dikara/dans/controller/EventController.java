@@ -3,6 +3,7 @@ package com.dikara.dans.controller;
 import com.dikara.dans.common.ApiResponse;
 import com.dikara.dans.common.ResponseUtil;
 import com.dikara.dans.dto.request.EventRequest;
+import com.dikara.dans.dto.response.EvenStatsResponse;
 import com.dikara.dans.dto.response.EventRegistrationResponse;
 import com.dikara.dans.dto.response.EventResponse;
 import com.dikara.dans.service.EventService;
@@ -76,6 +77,17 @@ public class EventController {
                 ResponseUtil.success(
                         "Registration success",
                         response
+                )
+        );
+    }
+
+    @GetMapping("/stats")
+    public ResponseEntity<ApiResponse<EvenStatsResponse>> getStatistics() {
+
+        return ResponseEntity.ok(
+                ResponseUtil.success(
+                        "Success",
+                        eventService.getStatistics()
                 )
         );
     }
