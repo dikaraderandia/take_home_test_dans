@@ -3,6 +3,7 @@ package com.dikara.dans.controller;
 import com.dikara.dans.common.ApiResponse;
 import com.dikara.dans.common.ResponseUtil;
 import com.dikara.dans.dto.request.EventRequest;
+import com.dikara.dans.dto.response.EventRegistrationResponse;
 import com.dikara.dans.dto.response.EventResponse;
 import com.dikara.dans.service.EventService;
 import jakarta.validation.Valid;
@@ -48,6 +49,33 @@ public class EventController {
                 ResponseUtil.success(
                         "Success",
                         eventService.getAllEvents()
+                )
+        );
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<ApiResponse<EventResponse>> getEventById(@PathVariable Long id) {
+
+        return ResponseEntity.ok(
+                ResponseUtil.success(
+                        "Success",
+                        eventService.getEventById(id)
+                )
+        );
+    }
+
+    @PostMapping("/{id}/register")
+    public ResponseEntity<ApiResponse<EventRegistrationResponse>> registerEvent(
+            @PathVariable Long id,
+            Authentication authentication
+    ) {
+
+        EventRegistrationResponse response = eventService.registerEvent(id, authentication.getName());
+
+        return ResponseEntity.ok(
+                ResponseUtil.success(
+                        "Registration success",
+                        response
                 )
         );
     }

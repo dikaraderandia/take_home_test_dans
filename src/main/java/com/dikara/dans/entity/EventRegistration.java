@@ -18,13 +18,12 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Data
-@EqualsAndHashCode(callSuper = true)
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
 @Entity
 @Table(name = "event_registrations")
-public class EventRegistration extends BaseEntity {
+public class EventRegistration {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
