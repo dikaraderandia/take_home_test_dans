@@ -4,6 +4,7 @@ import com.dikara.dans.dto.request.EventRequest;
 import com.dikara.dans.dto.response.EvenStatsResponse;
 import com.dikara.dans.dto.response.EventRegistrationResponse;
 import com.dikara.dans.dto.response.EventResponse;
+import com.dikara.dans.dto.response.TopEventResponse;
 import com.dikara.dans.entity.Event;
 import com.dikara.dans.entity.EventRegistration;
 import com.dikara.dans.entity.User;
@@ -21,6 +22,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @Service
@@ -110,18 +112,14 @@ public class EventServiceImpl implements EventService {
     @Override
     public EvenStatsResponse getStatistics() {
 
-        List<Event> events =
-                eventRepository.findAll();
-
-        List<EventRegistration> registrations =
-                eventRegistrationRepository.findAll();
+        List<Event> events = eventRepository.findAll();
+        List<EventRegistration> registrations = eventRegistrationRepository.findAll();
 
         long totalEvents = events.size();
         long totalRegistrations = registrations.size();
 
         double averageParticipants =
-                registrations.stream()
-                        .collect(
+                registrations.stream().collect(
                                 Collectors.groupingBy(
                                         r -> r.getEvent().getId(),
                                         Collectors.counting()
@@ -135,13 +133,35 @@ public class EventServiceImpl implements EventService {
 
         System.out.println("rata rata peserta per event: "+totalRegistrations/totalEvents);
 
+        List<TopEventResponse> topEvents =
+                registrations.stream()
+                        .collect(
+                                Collectors.groupingBy(
+                                        EventRegistration::getEvent,
+                                        Collectors.counting()
+                                )
+                        )
+                        .entrySet()
+                        .stream()
+                        .sorted(
+                                Map.Entry
+                                        .<Event, Long>comparingByValue()
+                                        .reversed()
+                        )
+                        .limit(3)
+                        .map(entry -> TopEventResponse.builder()
+                                .eventTitle(entry.getKey().getTitle())
+                                .totalParticipants(entry.getValue())
+                                .build())
+                        .toList();
+
 
 
         return EvenStatsResponse.builder()
                 .totalEvents(totalEvents)
                 .totalRegistrations(totalRegistrations)
                 .averageParticipants(averageParticipants)
-                //.topEvents(topEvents)
+                .topEventResponse(topEvents)
                 .build();
     }
 }

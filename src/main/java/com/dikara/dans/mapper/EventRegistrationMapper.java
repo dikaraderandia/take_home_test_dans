@@ -16,6 +16,7 @@ public class EventRegistrationMapper {
                 .eventId(event.getEvent().getId())
                 .eventTitle(event.getEvent().getTitle())
                 .registrationDate(event.getRegistrationDate())
+                .participantName(event.getUser().getName())
                 .build();
     }
 }
